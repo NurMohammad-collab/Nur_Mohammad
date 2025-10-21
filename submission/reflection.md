@@ -1,16 +1,13 @@
-# ✍️ Project Reflection
+The work on the weather bot project has been very rewarding and challenging, as it has given me important experience in the fields of software development, data processing, and user interaction. The objective of the project was to create a program, which would interpret natural language queries regarding the weather, get the right information via an external API and display it in a readable and understandable format. Looking back at this process, I understand to what extent I acquired knowledge not only regarding programming but also regarding the design of a user-oriented software.
 
-## AI Tools Used
-What tools did you use (e.g., ChatGPT, Copilot)? How did they help?
+The initial problem that I faced was the ability to decode the question of the user. The natural language is very dynamic and users may ask similar questions differently. When introducing the use of the parse_weather_question () function, I had to be cautious about the patterns and keywords that needed to be included to obtain intent, location, and time, which were: weather, in, today, or tomorrow. There were also variations in capitalization and spacing that I had to deal with, and this taught me the need to write flexible and robust code that is sensitive to variations in input.
 
-## Prompting Techniques
-Which intentional prompting strategies did you apply?
+Another important learning experience was the integration of external data with the help of the get_weather_data() function. The application of the wttr.in API, the processing of HTTP requests, and the processing of the received data in the form of JSON and the extraction of given values, including temperature and precipitation, became a practice. Firstly, I had a problem with a lack of consistency in the data of precipitation and understood that I needed to sum up the values of the hourly precipitation to get the correct total quantity of precipitation each day. This was a lesson of ensuring that data is validated and processed first before it is presented to users.
 
-## What Worked Well?
-Describe one thing you’re proud of.
+It was most satisfying to generate human response with the use of generate_weather_response. Using the retrieved data and the question under analysis to formulate straightforward and understandable messages was a way of highlighting the significance of communication in software design. It was gratifying to note how the program reacted to a user query in a natural manner, bringing raw information and useful information close.
 
-## What Would You Do Differently?
-Describe one thing you'd change if you had more time.
+Combining all elements into a primary operation promoted the importance of modular design. The program was simpler to test, debug and extend because each of the functions had a role assigned to it. Another thing that I understood is that it is crucial to handle errors, including invalid locations, missing data, or network problems, to provide the user with a pleasant experience.
 
-## Final Thoughts
-Any parting comments on your learning experience?
+In perspective, there is a number of areas to improve. I would also like to add more complicated time expressions, like next Monday or date with the calendar, to the program, and I would like the multi-word geographical names to be treated with higher precision, like New York. The parser might also be smarter and more trusting by integrating more advanced natural language processing tools. Also, it would be better to include a graphic interface or show trends in temperature and precipitation to optimize the user experience and make the application more interactive.
+
+All in all, this project made me more competent in problem solving, more knowledgeable about APIs, regular expressions, and data formatting and confident in creating interactive applications. It also taught me the need to put oneself in the position of the user and create software that is practical and user-friendly. I am now much more able to approach similar projects and I am looking forward to developing this weather bot and adding more sophisticated features in the future.
