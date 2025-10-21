@@ -1,0 +1,198 @@
+me: how to create precipitation graph
+ai: Perfect! To create a precipitation graph, you can use Matplotlib and plot the precipitation as bars, which is the standard for rainfall visualization. Here's how you can do it with your get_weather_data() function.
+
+1️⃣ Example Python Code for Precipitation
+import matplotlib.pyplot as plt
+
+# Get weather data for forecast days
+weather = get_weather_data("Perth", forecast_days=5)
+
+# Extract dates and total precipitation
+dates = [day['date'] for day in weather['forecast']]
+precip = [day['total_precip_mm'] for day in weather['forecast']]
+
+# Plot bar chart
+plt.figure(figsize=(8,5))
+plt.bar(dates, precip, color='blue', alpha=0.7, label='Precipitation (mm)')
+
+# Optionally, show precipitation values on top of bars
+for i, value in enumerate(precip):
+    plt.text(i, value + 0.1, str(value), ha='center', va='bottom')
+
+# Labels and title
+plt.xlabel("Date")
+plt.ylabel("Precipitation (mm)")
+plt.title(f"Precipitation Forecast for {weather['location']}")
+plt.grid(axis='y', linestyle='--', alpha=0.7)
+plt.legend()
+plt.tight_layout()
+plt.show()
+
+✅ How it works:
+
+dates → X-axis (forecast dates).
+
+precip → Y-axis (total precipitation for each day).
+
+plt.bar → Draws bars representing rainfall.
+
+Optional loop plt.text() → Displays precipitation value above each bar.
+
+Grid and labels → Makes chart readable.
+
+2️⃣ Optional: Combine Temperature & Precipitation in One Graph
+
+You can plot temperature as a line and precipitation as bars on the same chart using a secondary Y-axis:
+
+fig, ax1 = plt.subplots(figsize=(8,5))
+
+# X-axis: dates
+dates = [day['date'] for day in weather['forecast']]
+
+# Temperature line
+temps = [float(day['avg_temp_C']) for day in weather['forecast']]
+ax1.plot(dates, temps, color='orange', marker='o', label='Avg Temp (°C)')
+ax1.set_xlabel("Date")
+ax1.set_ylabel("Temperature (°C)", color='orange')
+ax1.tick_params(axis='y', labelcolor='orange')
+
+# Precipitation bars on secondary axis
+ax2 = ax1.twinx()
+precip = [day['total_precip_mm'] for day in weather['forecast']]
+ax2.bar(dates, precip, color='blue', alpha=0.5, label='Precipitation (mm)')
+ax2.set_ylabel("Precipitation (mm)", color='blue')
+ax2.tick_params(axis='y', labelcolor='blue')
+
+plt.title(f"Temperature & Precipitation Forecast for {weather['location']}")
+fig.tight_layout()
+plt.show()
+
+
+This will give you a combined graph where:
+
+Orange line → Average temperature
+
+Blue bars → Precipitation
+
+✅ Very clear for weather visualization.
+
+me: how can i test my code
+ai: Testing your weather data code involves a few steps: checking the function itself and checking the visualization. Here’s a structured way to do it:
+
+1️⃣ Test the get_weather_data() function
+
+You want to make sure the function returns the correct structure and values are reasonable.
+
+# Import your function
+# from your_module import get_weather_data  # if saved in a separate file
+
+# Test function
+weather = get_weather_data("Perth", forecast_days=3)
+
+# Print the output
+print(weather)
+
+
+Check:
+
+"current" contains temperature_C and precipitation_mm.
+
+"forecast" is a list of dictionaries with date, avg_temp_C, and total_precip_mm.
+
+Values look reasonable (e.g., temperatures are numbers, precipitation is >= 0).
+
+2️⃣ Test for edge cases
+
+Invalid location:
+
+weather = get_weather_data("InvalidCity", forecast_days=3)
+print(weather)  # Should handle errors gracefully
+
+
+Forecast days > supported days (wttr.in usually supports 3 days):
+
+weather = get_weather_data("Perth", forecast_days=5)
+print(weather)  # Should return only available days
+
+3️⃣ Test the Temperature Graph
+import matplotlib.pyplot as plt
+
+weather = get_weather_data("Perth", forecast_days=3)
+
+# Extract data
+dates = ["Today"] + [day['date'] for day in weather['forecast']]
+temps = [float(weather['current']['temperature_C'])] + [float(day['avg_temp_C']) for day in weather['forecast']]
+
+# Plot
+plt.plot(dates, temps, marker='o')
+plt.xlabel("Date")
+plt.ylabel("Temperature (°C)")
+plt.title("Temperature Forecast")
+plt.show()
+
+
+Check that:
+
+Dates are correct.
+
+Temperature points match the function’s output.
+
+Y-axis scales correctly.
+
+4️⃣ Test the Precipitation Graph
+weather = get_weather_data("Perth", forecast_days=3)
+dates = [day['date'] for day in weather['forecast']]
+precip = [day['total_precip_mm'] for day in weather['forecast']]
+
+plt.bar(dates, precip, color='blue')
+plt.xlabel("Date")
+plt.ylabel("Precipitation (mm)")
+plt.title("Precipitation Forecast")
+plt.show()
+
+
+Check that:
+
+Bars reflect the correct precipitation.
+
+Values on Y-axis are reasonable.
+
+5️⃣ Combine Temperature & Precipitation Graph
+
+Use the combined graph code I provided before and see:
+
+Orange line → temperature
+
+Blue bars → precipitation
+
+me: give me some test usecase for this 3 function weather_data, temperature and precipitation
+ai:Sure! Here are some practical test use cases for the three functions: get_weather_data(), temperature graph, and precipitation graph. These tests cover normal, edge, and error scenarios.
+
+1️⃣ get_weather_data() Function
+Test Case	Input	Expected Behavior / Check
+Normal Case	"Perth", forecast_days=3	Returns a dictionary with current and forecast keys. Forecast contains 3 days of data. Current temperature and precipitation are numeric.
+Default Days	"Sydney"	Should return forecast for 1 day (default) if no forecast_days specified.
+Max Forecast	"Melbourne", forecast_days=5	Should return only the available days (wttr.in supports ~3 days). Function should not break.
+Invalid Location	"InvalidCity"	Should handle gracefully. Either raise an exception or return a message indicating location not found.
+Zero Precipitation Day	"Perth" on dry day	total_precip_mm should be 0.0 or numeric, no error.
+Network Error	Simulate no internet	Function should raise a clear error or handle it gracefully.
+2️⃣ Temperature Graph Function
+Test Case	Input	Expected Behavior / Check
+Normal Case	Data from get_weather_data("Perth", forecast_days=3)	Line plot shows correct temperatures on X-axis (dates), current temperature marked.
+Single Day	Only today’s data	Graph shows one point correctly, Y-axis scales properly.
+Extreme Temperature	Add +50°C in forecast	Graph scales Y-axis to include extreme value.
+Missing Data	Forecast data missing avg_temp_C	Graph function should handle missing values without crashing.
+3️⃣ Precipitation Graph Function
+Test Case	Input	Expected Behavior / Check
+Normal Case	Data from get_weather_data("Perth", forecast_days=3)	Bar chart shows precipitation for each day.
+No Rain	Data with all zero precipitation	Bars should show zero height, graph should not crash.
+Heavy Rain	Simulate 100mm precipitation	Bars scale properly; Y-axis shows high value.
+Single Day	Forecast for 1 day	Single bar plotted correctly.
+Missing Data	Forecast data missing total_precip_mm	Graph function should handle missing values (e.g., set to 0) without error.
+✅ Optional Combined Graph Test Cases
+
+Temperature line + precipitation bars on same chart.
+
+Edge case: forecast_days=1 → both line and bar show one point.
+
+Edge case: missing data → line and bar still render correctly.
