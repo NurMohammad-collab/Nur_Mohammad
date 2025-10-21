@@ -1,0 +1,211 @@
+me: what is re
+ai: In Python, re is the regular expression module. It lets you search, match, and manipulate strings based on patterns.
+
+🔹 What is it used for?
+
+Searching for patterns in text
+
+Replacing parts of text
+
+Validating strings (like emails, phone numbers)
+
+Splitting text using patterns
+
+🔹 Basic Example
+import re
+
+text = "My email is example@gmail.com"
+
+# Search for an email pattern
+match = re.search(r'\S+@\S+\.\S+', text)
+if match:
+    print("Found email:", match.group())
+
+
+Output:
+
+Found email: example@gmail.com
+
+🔹 Common Functions in re
+Function	Description
+re.search(pattern, string)	Search for pattern anywhere in string. Returns first match.
+re.match(pattern, string)	Check if pattern matches at the beginning of the string.
+re.findall(pattern, string)	Return all matches as a list.
+re.sub(pattern, replacement, string)	Replace matches with something else.
+re.split(pattern, string)	Split string based on a pattern.
+🔹 Example: Validate phone number
+phone = "123-456-7890"
+if re.match(r'\d{3}-\d{3}-\d{4}$', phone):
+    print("Valid phone number")
+else:
+    print("Invalid phone number")
+
+
+💡 Analogy: Think of re as a “pattern detector” for text. You define the rules (pattern), and re finds or modifies text that matches.
+
+  me: can i read a question using re
+ai: Yes! You can use Python’s re module to read or extract a question from text.
+
+Basically, a “question” is usually a sentence that ends with a question mark ?, so you can write a regular expression to match that pattern.
+
+Example 1 — Extract all questions from a text
+import re
+
+text = """
+What is the capital of France? I went there last year. 
+Who is the president of the USA? 
+Python is fun, isn’t it? Yes!
+"""
+
+# Regular expression to find sentences ending with '?'
+questions = re.findall(r'[^.?!]*\?', text)
+
+for q in questions:
+    print(q.strip())
+
+
+Output:
+
+What is the capital of France?
+Who is the president of the USA?
+Python is fun, isn’t it?
+
+✅ How it works:
+
+[^.?!]* → Matches any characters except sentence-ending punctuation.
+
+\? → Matches a literal question mark.
+
+re.findall() → Finds all occurrences in the text.
+
+Example 2 — Check if a string is a question
+def is_question(text):
+    return bool(re.match(r'.*\?$', text.strip()))
+
+print(is_question("Is this Python?"))  # True
+print(is_question("This is Python."))  # False
+
+
+.*\?$ → Matches any text ending with ?.
+
+bool(re.match(...)) → Returns True if it’s a question.
+
+💡 Tip: You can combine this with get_weather_data() or other functions to detect user queries that are questions, e.g., “What is the weather in Perth?”
+
+If you want, I can write a small Python snippet that reads a paragraph and prints only the questions — perfect for testing or parsing homework/exam questions.
+
+  me: how can i break down the question in 3 parts and get location attribute and time
+  ai: Ah! You want to parse a natural language question like:
+
+“What is the weather in Perth tomorrow?”
+
+…into three parts: intent, location, and time. We can do this in Python using re, simple string parsing, or even spacy/nltk for more advanced NLP. Here’s a practical way using re and keywords.
+
+1️⃣ Define the goal
+
+Example question:
+
+"What is the weather in Perth tomorrow?"
+
+
+Breakdown:
+
+Intent → “weather”
+
+Location → “Perth”
+
+Time → “today”, “tomorrow”, or a specific date
+
+2️⃣ Using re to extract parts
+import re
+
+def parse_weather_question(question):
+    question = question.lower()  # normalize
+    intent = None
+    location = None
+    time = None
+
+    # 1. Detect intent
+    if re.search(r'weather', question):
+        intent = 'weather'
+
+    # 2. Detect location (assume after 'in')
+    loc_match = re.search(r'in ([a-zA-Z\s]+)', question)
+    if loc_match:
+        location = loc_match.group(1).strip().title()
+
+    # 3. Detect time (keywords like today, tomorrow)
+    time_match = re.search(r'\b(today|tomorrow|tonight|morning|afternoon|evening)\b', question)
+    if time_match:
+        time = time_match.group(1)
+
+    return {
+        "intent": intent,
+        "location": location,
+        "time": time
+    }
+
+# Test
+q = "What is the weather in Perth tomorrow?"
+parsed = parse_weather_question(q)
+print(parsed)
+
+
+Output:
+
+{'intent': 'weather', 'location': 'Perth', 'time': 'tomorrow'}
+
+me: how to match lower and upper without any problem
+ai: Ah! You want to match text in Python regardless of case (lowercase or uppercase) without worrying about how it’s written. There are a few ways to do this, especially with regular expressions (re).
+
+1️⃣ Using re.IGNORECASE (Recommended)
+import re
+
+text = "What is the Weather in Perth tomorrow?"
+
+# Match 'weather' case-insensitively
+match = re.search(r'weather', text, re.IGNORECASE)
+
+if match:
+    print("Found:", match.group())
+
+
+Output:
+
+Found: Weather
+
+
+re.IGNORECASE makes the regex ignore capitalization.
+
+Works for weather, Weather, WEATHER, etc.
+
+2️⃣ Convert text to lowercase first
+text = "What is the Weather in Perth tomorrow?"
+text_lower = text.lower()
+
+if "weather" in text_lower:
+    print("Found weather")
+
+
+Simple string method.
+
+Works well for simple keyword matching.
+
+But regex with IGNORECASE is more flexible for patterns.
+
+3️⃣ Using character sets in regex (less common)
+text = "What is the Weather in Perth?"
+match = re.search(r'[Ww][Ee][Aa][Tt][Hh][Ee][Rr]', text)
+if match:
+    print("Found:", match.group())
+
+
+Works but tedious for long words.
+
+Better to use re.IGNORECASE.
+
+✅ Recommendation
+
+For regex matching → use re.IGNORECASE.
+
+For simple substring search → convert to lowercase (.lower()) and compare.
